@@ -6,8 +6,8 @@ pipeline {
     stages {
         stage('Condition check') {
             steps {
-                if(params.DEPLOY == 'install') {
-                    script {
+                script {
+                    if(params.DEPLOY == 'install') {
                         def buildScript = load 'vars/build.groovy'
                         buildScript.buildStage()
 
@@ -17,34 +17,34 @@ pipeline {
                         def checkScript = load 'var/check.groovy'
                         checkScript.checkStage()
                     }
-                }
-                if(params.DEPLOY == 'check') {
-                    script {
-                        def buildScript = load 'vars/build.groovy'
-                        buildScript.buildStage()
+                    if(params.DEPLOY == 'check') {
+                        script {
+                            def buildScript = load 'vars/build.groovy'
+                            buildScript.buildStage()
+                        }
+                        print('Update repositiry complete')
                     }
-                    print('Update repositiry complete')
-                }
-                if(params.DEPLOY == 'delete') {
-                    script {
-                        withEnv(["PATH=/usr/bin/local/bin:$PATH"]) {
-                            withCredentials([file(credentialId: 'kubernetes', variable: 'KUBECONFIG')]) {
-                                dir(serviceDir){
-                                    echo "KUBECONFIG path is: ${env.KUBECONFIG}"
-                                    sh "kubectl get nodes --kubeconfig ${env.KUBECONFIG}"
+                    if(params.DEPLOY == 'delete') {
+                        script {
+                            withEnv(["PATH=/usr/bin/local/bin:$PATH"]) {
+                                withCredentials([file(credentialId: 'kubernetes', variable: 'KUBECONFIG')]) {
+                                    dir(serviceDir){
+                                        echo "KUBECONFIG path is: ${env.KUBECONFIG}"
+                                        sh "kubectl get nodes --kubeconfig ${env.KUBECONFIG}"
 
-                                    sh "pwd"
-                                    sh "ls -l ./helm"
-                                    echo "Delete services using Helm..."
+                                        sh "pwd"
+                                        sh "ls -l ./helm"
+                                        echo "Delete services using Helm..."
 
-                                    sh "helm uninstall prometheus-release -n default"
+                                        sh "helm uninstall prometheus-release -n default"
 
-                                    sh "helm uninstall pushgateway-release -n default"
+                                        sh "helm uninstall pushgateway-release -n default"
+                                    }
                                 }
                             }
                         }
+                        echo "✅ Unistall complete"
                     }
-                    echo "✅ Unistall complete"
                 }
             }
         }
