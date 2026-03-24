@@ -8,7 +8,7 @@ def checkStage() {
                     script: "kubectl get deploy",
                     returnStdout: true
                 ).trim()
-                if(!checkPrcheckDeployometheus.contains("prometheus-deployment") &&!checkPrcheckDeployometheus.contains("pushgateway")){
+                if(!checkDeploy.contains("prometheus-deployment") &&!checkDeploy.contains("pushgateway")){
                     error("Services isn't in kuber")
                 }
             }
