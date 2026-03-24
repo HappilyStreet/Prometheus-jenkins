@@ -11,7 +11,7 @@ pipeline {
                         def buildScript = load 'vars/build.groovy'
                         buildScript.buildStage()
 
-                        def deploySrcipt = load 'vars/deploy.groovy'
+                        def deployScript = load 'vars/deploy.groovy'
                         deployScript.deployStage()
 
                         def checkScript = load 'vars/check.groovy'
