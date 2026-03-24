@@ -7,7 +7,7 @@ def deployStage() {
                     sh "kubectl get nodes --kubeconfig ${env.KUBECONFIG}"
 
                     sh "pwd"
-                    sh "ls -l ./helm"
+                    
                     echo "Deploying to Kubernetes using Helm..."
                     sh "Helm upgrade --install prometheus-release ./Prometheus-Helm"
 
