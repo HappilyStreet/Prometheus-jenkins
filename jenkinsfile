@@ -1,7 +1,7 @@
 pipeline {
     agent any 
     environment {
-        serviceDir = '../prometheus' //Путь в workspace до репозитория с сервисом
+        serviceDir = '../apps' //Путь в workspace до репозитория с сервисом
     }
     stages {
         stage('Condition check') {
@@ -30,10 +30,6 @@ pipeline {
                                     sh script: 'kubectl get nodes --kubeconfig $KUBECONFIG'
 
                                     dir(serviceDir){
-                                        sh "pwd"
-                                        sh "ls -l ./Pushgateway"
-                                        sh "ls -l ./Prometheus-Helm"
-
                                         echo "Delete services using Helm..."
 
                                         sh "helm uninstall prometheus-release -n default"
