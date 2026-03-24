@@ -33,12 +33,12 @@ pipeline {
                                         sh "pwd"
                                         sh "ls -l ./Pushgateway"
                                         sh "ls -l ./Prometheus-Helm"
-                                        
+
                                         echo "Delete services using Helm..."
 
-                                        sh "helm uninstall prometheus-release ./Prometheus-Helm -n default"
+                                        sh "helm uninstall prometheus-release -n default"
 
-                                        sh "helm uninstall pushgateway-release ./Pushgateway -n default"
+                                        sh "helm uninstall pushgateway-release -n default"
                                     }
                                 }
                             }
