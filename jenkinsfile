@@ -28,10 +28,10 @@ pipeline {
                         script {
                             withEnv(["PATH=/usr/bin/local/bin:$PATH"]) {
                                 withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
+                                    echo "KUBECONFIG path is: ${env.KUBECONFIG}"
+                                    sh "kubectl get nodes --kubeconfig ${env.KUBECONFIG}"
+                                    
                                     dir(serviceDir){
-                                        echo "KUBECONFIG path is: ${env.KUBECONFIG}"
-                                        sh "kubectl get nodes --kubeconfig ${env.KUBECONFIG}"
-
                                         sh "pwd"
                                         sh "ls -l ./helm"
                                         echo "Delete services using Helm..."
