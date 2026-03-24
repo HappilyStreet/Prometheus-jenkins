@@ -4,56 +4,49 @@ pipeline {
         serviceDir = '../prometheus' //Путь в workspace до репозитория с сервисом
     }
     stages {
-        stage('Build stage'){
-            withEnv(["PATH=/usr/local/bin$PATH"]) {
-                dir(serviceDir) {
-                    if(fileExists(".git")) {
-                        echo "✅ Repo exists, pulling latest changes"
-                        sh "git reset --hard && git clean -fd"
-                        sh "git pull origin main"
+        stage('Condition check') {
+            steps {
+                if(params.DEPLOY == 'install') {
+                    script {
+                        def buildScript = load 'vars/build.groovy'
+                        buildScript.buildStage()
+
+                        def deploySrcipt = load 'vars/deploy.groovy'
+                        deployScriot.deployStage()
+
+                        def checkScript = load 'var/check.groovy'
+                        checkScript.checkStage()
                     }
-                    else {
-                        echo "🔹Repo didnt exist and will be clone"
-                        sh "git clione https://github.com/HappilyStreet/Prometheus-jenkins.git ."
+                }
+                if(params.DEPLOY == 'check') {
+                    script {
+                        def buildScript = load 'vars/build.groovy'
+                        buildScript.buildStage()
                     }
+                    print('Update repositiry complete')
+                }
+                if(params.DEPLOY == 'delete') {
+                    script {
+                        withEnv(["PATH=/usr/bin/local/bin:$PATH"]) {
+                            withCredentials([file(credentialId: 'kubernetes', variable: 'KUBECONFIG')]) {
+                                dir(serviceDir){
+                                    echo "echo "KUBECONFIG path is: ${env.KUBECONFIG}""
+                                    sh "kubectl get nodes --kubeconfig ${env.KUBECONFIG}"
+
+                                    sh "pwd"
+                                    sh "ls -l ./helm"
+                                    echo "Delete services using Helm..."
+
+                                    sh "helm uninstall prometheus-release -n default"
+
+                                    sh "helm uninstall pushgateway-release -n default"
+                                }
+                            }
+                        }
+                    }
+                    echo "✅ Unistall complete"
                 }
             }
         }
-        echo "✅ Build complete"
-
-        stage('Deploy prometheus to host') {
-            dir(serviceDir) {
-                withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
-                    withEnv(["PATH=/usr/loca/bin:/opt/howebrew/bin:$PATH"]) {
-                        echo "echo "KUBECONFIG path is: ${env.KUBECONFIG}""
-                        sh "kubectl get nodes --kubeconfig ${env.KUBECONFIG}"
-
-                        sh "pwd"
-                        sh "ls -l ./helm"
-                        echo "Deploying to Kubernetes using Helm..."
-                        sh "Helm upgrade --install prometheus-release ./Prometheus-Helm"
-
-                        sh "Helm upgrade --install prometheus-release ./Pushgateway"
-                    }
-                }
-            }
-        }
-        echo "✅ Deploy complete"
-
-        stage('Check services in kubernetes') {
-            withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
-                echo "Check service in kubernetes"
-
-                def checkDeploy = sh (
-                    script: "kubectl get deploy"
-                    returnStdout: true
-                ).trim()
-                if(!checkPrcheckDeployometheus.contains("prometheus-deployment") &&!checkPrcheckDeployometheus.contains("pushgateway")){
-                    error("Services isn't in kuber")
-                }
-            }
-
-        }
-       echo "✅ Check complete"
-    }
+    }    
 }
