@@ -4,7 +4,7 @@ def checkStage() {
             echo "Check service in kubernetes"
 
             def checkDeploy = sh (
-                script: "kubectl get deploy"
+                script: "kubectl get deploy",
                 returnStdout: true
             ).trim()
             if(!checkPrcheckDeployometheus.contains("prometheus-deployment") &&!checkPrcheckDeployometheus.contains("pushgateway")){
