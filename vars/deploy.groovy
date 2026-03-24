@@ -3,7 +3,7 @@ def deployStage() {
         dir(serviceDir) {
             withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
                 withEnv(["PATH=/usr/loca/bin:/opt/howebrew/bin:$PATH"]) {
-                    echo "echo "KUBECONFIG path is: ${env.KUBECONFIG}""
+                    echo "KUBECONFIG path is: ${env.KUBECONFIG}"
                     sh "kubectl get nodes --kubeconfig ${env.KUBECONFIG}"
 
                     sh "pwd"
