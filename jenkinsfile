@@ -12,16 +12,14 @@ pipeline {
                         buildScript.buildStage()
 
                         def deploySrcipt = load 'vars/deploy.groovy'
-                        deployScriot.deployStage()
+                        deployScript.deployStage()
 
-                        def checkScript = load 'var/check.groovy'
+                        def checkScript = load 'vars/check.groovy'
                         checkScript.checkStage()
                     }
                     if(params.DEPLOY == 'check') {
-                        script {
-                            def buildScript = load 'vars/build.groovy'
-                            buildScript.buildStage()
-                        }
+                        def buildScript = load 'vars/build.groovy'
+                        buildScript.buildStage()
                         print('Update repositiry complete')
                     }
                     if(params.DEPLOY == 'delete') {
@@ -29,8 +27,8 @@ pipeline {
                             withEnv(["PATH=/usr/bin/local/bin:$PATH"]) {
                                 withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
                                     echo "KUBECONFIG path is: ${env.KUBECONFIG}"
-                                    sh "kubectl get nodes --kubeconfig ${env.KUBECONFIG}"
-                                    
+                                    sh script: 'kubectl get nodes --kubeconfig $KUBECONFIG'
+
                                     dir(serviceDir){
                                         sh "pwd"
                                         sh "ls -l ./helm"
