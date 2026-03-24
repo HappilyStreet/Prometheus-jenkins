@@ -30,7 +30,7 @@ pipeline {
                         withEnv(["PATH=/usr/bin/local/bin:$PATH"]) {
                             withCredentials([file(credentialId: 'kubernetes', variable: 'KUBECONFIG')]) {
                                 dir(serviceDir){
-                                    echo "echo "KUBECONFIG path is: ${env.KUBECONFIG}""
+                                    echo "KUBECONFIG path is: ${env.KUBECONFIG}"
                                     sh "kubectl get nodes --kubeconfig ${env.KUBECONFIG}"
 
                                     sh "pwd"
