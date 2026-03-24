@@ -1,0 +1,59 @@
+pipeline {
+    agent any 
+    environment {
+        serviceDir = '../prometheus' //Путь в workspace до репозитория с сервисом
+    }
+    stages {
+        stage('Build stage'){
+            withEnv(["PATH=/usr/local/bin$PATH"]) {
+                dir(serviceDir) {
+                    if(fileExists(".git")) {
+                        echo "✅ Repo exists, pulling latest changes"
+                        sh "git reset --hard && git clean -fd"
+                        sh "git pull origin main"
+                    }
+                    else {
+                        echo "🔹Repo didnt exist and will be clone"
+                        sh "git clione https://github.com/HappilyStreet/Prometheus-jenkins.git ."
+                    }
+                }
+            }
+        }
+        echo "✅ Build complete"
+
+        stage('Deploy prometheus to host') {
+            dir(serviceDir) {
+                withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
+                    withEnv(["PATH=/usr/loca/bin:/opt/howebrew/bin:$PATH"]) {
+                        echo "echo "KUBECONFIG path is: ${env.KUBECONFIG}""
+                        sh "kubectl get nodes --kubeconfig ${env.KUBECONFIG}"
+
+                        sh "pwd"
+                        sh "ls -l ./helm"
+                        echo "Deploying to Kubernetes using Helm..."
+                        sh "Helm upgrade --install prometheus-release ./Prometheus-Helm"
+
+                        sh "Helm upgrade --install prometheus-release ./Pushgateway"
+                    }
+                }
+            }
+        }
+        echo "✅ Deploy complete"
+
+        stage('Check services in kubernetes') {
+            withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
+                echo "Check service in kubernetes"
+
+                def checkDeploy = sh (
+                    script: "kubectl get deploy"
+                    returnStdout: true
+                ).trim()
+                if(!checkPrcheckDeployometheus.contains("prometheus-deployment") &&!checkPrcheckDeployometheus.contains("pushgateway")){
+                    error("Services isn't in kuber")
+                }
+            }
+
+        }
+       echo "✅ Check complete"
+    }
+}
