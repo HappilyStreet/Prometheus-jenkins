@@ -27,7 +27,7 @@ pipeline {
                     if(params.DEPLOY == 'delete') {
                         script {
                             withEnv(["PATH=/usr/bin/local/bin:$PATH"]) {
-                                withCredentials([file(credentialsId: 'kubernetes', variable: 'KUBECONFIG')]) {
+                                withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
                                     dir(serviceDir){
                                         echo "KUBECONFIG path is: ${env.KUBECONFIG}"
                                         sh "kubectl get nodes --kubeconfig ${env.KUBECONFIG}"
