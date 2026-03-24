@@ -9,7 +9,7 @@ def buildStage() {
                 }
                 else {
                     echo "🔹Repo didnt exist and will be clone"
-                    sh "git clione https://github.com/HappilyStreet/Prometheus-jenkins.git ."
+                    sh "git clone https://github.com/HappilyStreet/Prometheus-jenkins.git ."
                 }
             }
         }
