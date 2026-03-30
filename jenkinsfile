@@ -42,8 +42,8 @@ pipeline {
                         echo "✅ Unistall complete"
                     }
                 }
+                echo "✅ All tasks is done"
             }
-            echo "✅ All tasks is done"
         }
     }    
 }
