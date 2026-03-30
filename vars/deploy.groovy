@@ -9,9 +9,9 @@ def deployStage() {
                     sh "pwd"
                     
                     echo "Deploying to Kubernetes using Helm..."
-                    sh "Helm upgrade --install prometheus-release ./Prometheus-Helm"
+                    sh "Helm upgrade --install prometheus-release ${serviceDir}/Prometheus-Helm"
 
-                    sh "Helm upgrade --install pushgateway-release ./Pushgateway"
+                    sh "Helm upgrade --install pushgateway-release ${serviceDir}/Pushgateway"
                 }
             }
         }
