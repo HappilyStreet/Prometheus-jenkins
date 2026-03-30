@@ -43,7 +43,7 @@ pipeline {
                     }
                 }
             }
+            echo "✅ All tasks is done"
         }
-        echo "✅ All tasks is done"
     }    
 }
