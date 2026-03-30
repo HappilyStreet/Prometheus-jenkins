@@ -1,6 +1,6 @@
 def checkStage() {
     stage('Check services in kubernetes') {
-        withEnv(["PATH=/usr/local/bin:/opt/homebrew/bin:$PATH"]) {
+        withEnv(["PATH=${env.HOME}/bin:${env.PATH}"]) {
             withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
                 echo "Check service in kubernetes"
 

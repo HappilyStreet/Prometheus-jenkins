@@ -24,7 +24,7 @@ pipeline {
                     }
                     if(params.DEPLOY == 'delete') {
                         script {
-                            withEnv(["PATH=/usr/local/bin:/opt/homebrew/bin:$PATH"]) {
+                            withEnv(["PATH=${env.HOME}/bin:${env.PATH}"]) {
                                 withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
                                     echo "KUBECONFIG path is: ${env.KUBECONFIG}"
                                     sh script: 'kubectl get nodes --kubeconfig $KUBECONFIG'
@@ -44,5 +44,6 @@ pipeline {
                 }
             }
         }
+        echo "✅ All tasks is done"
     }    
 }

@@ -2,7 +2,7 @@ def deployStage() {
     stage('Deploy prometheus to host') {
         dir(serviceDir) {
             withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
-                withEnv(["PATH=/usr/local/bin:/opt/homebrew/bin:$PATH"]) {
+                withEnv(["PATH=${env.HOME}/bin:${env.PATH}"]) {
                     echo "KUBECONFIG path is: ${env.KUBECONFIG}"
                     sh "kubectl get nodes --kubeconfig ${env.KUBECONFIG}"
 
